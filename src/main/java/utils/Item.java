@@ -2,44 +2,29 @@ package utils;
 
 public class Item {
     private final String name;
-    private final double weight;
-    private final double cost;
-    private int count;
+    private final int weight;
+    private final int cost;
 
-    public Item(String name, double weight, int count, double cost) {
+    public Item(String name, int weight, int cost) {
         this.name = name;
         this.weight = weight;
         this.cost = cost;
-        this.count = count;
     }
 
     @Override
     public String toString() {
-        return "{" + name + "," + (int) weight + "," + count + "," + (int) cost + "}";
+        return "{" + name + "," + (int) weight + "," + (int) cost + "}";
     }
 
     public String getName() {
         return name;
     }
 
-    public double decreaseCount() {
-        if (count > 0) return --count;
-        return 0;
-    }
-
-    public double increaseCount() {
-        return ++count;
-    }
-
-    public double getWeight() {
+    public int getWeight() {
         return weight;
     }
 
-    public double getCost() {
+    public int getCost() {
         return cost;
-    }
-
-    public int getCount() {
-        return count;
     }
 }

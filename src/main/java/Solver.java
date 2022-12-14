@@ -1,10 +1,9 @@
 import utils.Item;
-import utils.StreamHelper;
 
 import java.util.ArrayList;
 
-import static utils.ItemProvider.getBackpack;
 import static utils.ItemProvider.getItems;
+import static utils.ItemProvider.printItems;
 
 public class Solver {
     static int c = 0;
@@ -13,9 +12,9 @@ public class Solver {
         int reqWeight = 50; //По условию задачи
         ArrayList<Item> items = getItems();
         System.out.println("{название,вес,количество,стоимость}");
-        System.out.println(items);
+        printItems(items);
         System.out.println("--------Начало расчетов--------");
-//        findMaxPrice(items, reqWeight);
+        findMaxPrice(items, reqWeight);
 //        ArrayList<Item> backpack = getBackpack();
 //        System.out.println("--------Конец  расчетов--------");
 //        System.out.println("Содержимое рюкзака: " + backpack);
@@ -24,49 +23,42 @@ public class Solver {
     }
 
     private static void findMaxPrice(ArrayList<Item> items, int weight) {
-        ArrayList<ArrayList<Item>> backpacks = new ArrayList<>();
-        double[][] bp = new double[items.size()][];
+        int[][] bp = new int[items.size()][weight];
         for (int i = 0; i < items.size(); i++) {
-            ArrayList<Item> backpack = new ArrayList<>();
             for (int j = 0; j < weight; j++) {
                 int currWeight = j + 1;
                 Item currItem = items.get(i);
-//              Если вес предмета меньше веса столбца
-                if (currItem.getWeight() <= currWeight) {
-                    int max = -1;
-//                  Если в рюкзаке ничего нет или положили меньше, чем всего есть вещей
-                    if (backpack.get(i) == null || backpack.get(i).getCount() < currItem.getCount()) {
+//              Первую строку заполняем просто
+                if (i == 0) {
+                    if (currItem.getWeight() <= currWeight) {
+                        bp[0][j] = currItem.getCost();
+                    } else bp[0][j] = 0;
+                } else {
+                    if (currItem.getWeight() > currWeight) //если очередной предмет не влезает в рюкзак,
+                        bp[i][j] = bp[i - 1][j];    //записываем предыдущий максимум
+                    else {
+                        /*рассчитаем цену очередного предмета + максимальную цену для (максимально возможный для рюкзака вес − вес предмета)*/
+                        int newPrice;
+                        if (currWeight - currItem.getWeight() > 0)
+                            newPrice = currItem.getCost() + bp[i - 1][currWeight - currItem.getWeight() - 1];
+                        else newPrice = currItem.getCost();
 
+                        if (bp[i - 1][j] >= newPrice) //если предыдущий максимум больше
+                            bp[i][j] = bp[i - 1][j]; //запишем его
+                        else {
+                            /*иначе фиксируем новый максимум: текущий предмет + стоимость свободного пространства*/
+                            bp[i][j] = newPrice;
+                        }
                     }
                 }
             }
         }
-    }
 
-//    private static void findMaxPrice(ArrayList<Item> items, int weight) {
-//        if (items.size() > 0) {
-//            double max = -1;
-//            Item maxItem = null;
-//            for (Item item : items) {
-////              Тут выбирается предмет, который будет переложен в рюкзак
-//                if (item.getCost()/item.getWeight() > max && item.getWeight() <= weight) {
-//                    maxItem = item;
-//                    max = item.getCost()/ item.getWeight();
-//                }
-////                if (item.getCost() > max && item.getWeight() <= weight) {
-////                    maxItem = item;
-////                    max = item.getCost();
-////                }
-//
-//            }
-//            if (maxItem != null) {
-//                weight -= maxItem.getWeight();
-//                transferToBackpack(maxItem);
-//                if (c > 9) System.out.print(c++ + ") ");
-//                else System.out.print(c++ + ")  ");
-//                System.out.println(items);
-//                findMaxPrice(items, weight);
-//            }
-//        }
-//    }
+        for (int i = 0; i < items.size(); i++) {
+            for (int j = 0; j < weight; j++) {
+                System.out.print(bp[i][j] + " ");
+            }
+            System.out.print("\n");
+        }
+    }
 }
