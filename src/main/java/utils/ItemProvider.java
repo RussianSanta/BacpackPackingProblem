@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class ItemProvider {
     private static ArrayList<Item> items;
-    private static ArrayList<Item> backpack = new ArrayList<>();
 
     private static void genItems() {
         items = new ArrayList<>();
@@ -63,9 +62,5 @@ public class ItemProvider {
                 .append("}");
         builder.append("]");
         System.out.println(builder);
-    }
-
-    public static ArrayList<Item> getBackpack() {
-        return backpack;
     }
 }
